@@ -3,46 +3,7 @@ import { Client, Events, GatewayIntentBits, ActivityType } from "discord.js";
 import Web3 from 'web3';
 import Web3Token from 'web3-token';
 
-const web3 = new Web3();
 
-dotenv.config();
-
-const TOKEN_ID = process.env.DISCORD_WOLF_BOT_TOKEN;
-const CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
-const WOLF_GAME_API_KEY = process.env.WOLF_GAME_API_KEY;
-const SIGNER_PRIVATE_KEY = process.env.SIGNER_PRIVATE_KEY;
-const SIGNER_ADDRESS = process.env.SIGNER_ADDRESS;
-
-console.log('process.env', process.env);
-
-const woolEmoji = '<:wool:1195863042710319114>';
-// Create a new client instance
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMembers,
-  ],
-  partials: ["CHANNEL"], // This is required to receive DMs
-});
-
-client.once(Events.ClientReady, async () => {
-  console.log(`Ready! Logged in as ${client.user.tag}`);
-
-  // Set an interval every 5 min to update the price status
-  setInterval(updateActivityStatus, 5 * 60 * 1000);
-
-  // Set an interval every hour to update the price channel
-  setInterval(updatePriceChannel, 60 * 60 * 1000);
-
-  updateActivityStatus(client);
-  updatePriceChannel(client);
-});
-
-// Log in to Discord with your client's token
-client.login(TOKEN_ID);
 
 async function updateActivityStatus() {
   const { woolPrice, ethPrice } = await fetchCoinGeckoPrice();
@@ -528,5 +489,46 @@ async function signMessage() {
 }
 
 export default (req, res) => {
-  res.status(200).send('Welcome to Wolf Game: Wolf Edition');
+  if (req.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
+    return res.status(401).end('Unauthorized');
+  }
+  
+  console.log('Running Wolf Watcher Cron');
+
+  const web3 = new Web3();
+
+  dotenv.config();
+
+  const TOKEN_ID = process.env.DISCORD_WOLF_BOT_TOKEN;
+  const CHANNEL_ID = process.env.DISCORD_CHANNEL_ID;
+  const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
+  const WOLF_GAME_API_KEY = process.env.WOLF_GAME_API_KEY;
+  const SIGNER_PRIVATE_KEY = process.env.SIGNER_PRIVATE_KEY;
+  const SIGNER_ADDRESS = process.env.SIGNER_ADDRESS;
+
+  console.log('process.env', process.env);
+
+  const woolEmoji = '<:wool:1195863042710319114>';
+  // Create a new client instance
+  const client = new Client({
+    intents: [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.MessageContent,
+      GatewayIntentBits.GuildMembers,
+    ],
+    partials: ["CHANNEL"], // This is required to receive DMs
+  });
+
+  client.once(Events.ClientReady, async () => {
+    console.log(`Ready! Logged in as ${client.user.tag}`);
+
+    updateActivityStatus(client);
+    updatePriceChannel(client);
+  });
+
+  // Log in to Discord with your client's token
+  client.login(TOKEN_ID);
+
+  res.status(200).send('Task Completed');
 };

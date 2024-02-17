@@ -11,5 +11,11 @@
 			"src": "/(.*)",
 			"dest": "src/wolf-game-watcher/index.js"
 		}
+	],
+	"crons": [
+		{
+			"path": "/api/wolf-watcher-cron.js",
+			"schedule": "0 0,6,12,18 * * *"
+		}
 	]
 }
