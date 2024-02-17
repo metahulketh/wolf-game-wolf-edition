@@ -488,11 +488,11 @@ async function signMessage() {
   }
 }
 
-export default (req, res) => {
+export default function handler(req, res) {
   if (req.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).end('Unauthorized');
   }
-  
+
   console.log('Running Wolf Watcher Cron');
 
   const web3 = new Web3();
@@ -530,5 +530,5 @@ export default (req, res) => {
   // Log in to Discord with your client's token
   client.login(TOKEN_ID);
 
-  res.status(200).send('Task Completed');
+  res.status(200).end('Task Completed');
 };
