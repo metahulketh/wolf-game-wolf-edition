@@ -526,4 +526,6 @@ async function signMessage() {
   }
 }
 
-export default {};
+export default (req, res) => {
+  res.status(200).send('W');
+};
