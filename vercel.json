@@ -1,17 +1,5 @@
 {
 	"version": 2,
-	"builds": [
-		{
-			"src": "src/wolf-game-watcher/index.js",
-			"use": "@vercel/node"
-		}
-	],
-	"routes": [
-		{
-			"src": "/(.*)",
-			"dest": "src/wolf-game-watcher/index.js"
-		}
-	],
 	"crons": [
 		{
 			"path": "/api/wolf-watcher-cron.js",
