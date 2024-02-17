@@ -15,6 +15,7 @@ const SIGNER_PRIVATE_KEY = process.env.SIGNER_PRIVATE_KEY;
 const SIGNER_ADDRESS = process.env.SIGNER_ADDRESS;
 
 
+
 const woolEmoji = '<:wool:1195863042710319114>';
 // Create a new client instance
 const client = new Client({
@@ -527,5 +528,5 @@ async function signMessage() {
 }
 
 export default (req, res) => {
-  res.status(200).send('W');
+  res.status(200).send('Welcome to Wolf Game: Wolf Edition');
 };
